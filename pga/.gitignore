@@ -1,0 +1,14 @@
+bin
+build
+dist
+include
+lib
+*.pyc
+*.swp
+*.egg-info
+
+database.db
+settings.py
+
+# Sphinx docs
+docs/_build/

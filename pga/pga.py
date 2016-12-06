@@ -4,7 +4,7 @@ from sklearn.cluster import KMeans
 
 class PeerGroup():
     def __init__(self, df, **kwargs):
-        _df_grouped = self.clustering(df, **kwargs)
+        self._df_grouped = self.clustering(df, **kwargs)
     
     def clustering(self, df, **kwargs):
         if df.shape[1] > 2 and isinstance(df, pd.core.frame.DataFrame):
@@ -16,8 +16,7 @@ class PeerGroup():
         model = KMeans(**kwargs)
         model.fit(vals)
         label = model.labels_
-        df_g = pd.DataFrame({'userid':ids, 'value': vals.reshape(-1,), 'label':label})
-        self._df_grouped = df_g
+        df_g = pd.DataFrame({'id':ids, 'value': vals.reshape(-1,), 'label':label})
         return df_g
     
     def des_label(self):
@@ -27,8 +26,13 @@ class PeerGroup():
     def describe(self, ascending=False):
         if self._df_grouped is not None:
             return self._df_grouped.groupby('label').\
-                        agg({'userid':len,'value':np.mean}).\
-                        sort('value', ascending=ascending)
-    
+                        agg({'id':len,'value':np.mean}).\
+                        sort('value', ascending=ascending).\
+                        rename(columns={'value':'mean','id':'count'}).reset_index()
+                    
     def get_data(self):
-        return _df_grouped
+        return self._df_grouped
+    
+    def head(self):
+        return self._df_grouped.head()
+    

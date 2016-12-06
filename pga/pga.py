@@ -2,15 +2,18 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+
 class PeerGroup():
     def __init__(self, df, **kwargs):
         self._df_grouped = self.clustering(df, **kwargs)
     
     def clustering(self, df, **kwargs):
-        if df.shape[1] > 2 and isinstance(df, pd.core.frame.DataFrame):
+        if df.shape[1] >= 2 and isinstance(df, pd.core.frame.DataFrame):
             pass
         else:
-            return ValueError("length of column must > 2")
+            return ValueError("length of column must >= 2")
         ids = df.iloc[:,0].values
         vals = df.iloc[:,1].values.reshape(-1,1)
         model = KMeans(**kwargs)
@@ -36,3 +39,7 @@ class PeerGroup():
     def head(self):
         return self._df_grouped.head()
     
+    def anova(self):
+        model = ols('value ~ label', data = self._df_grouped).fit()
+        anova_table = sm.stats.anova_lm(model, typ=2)
+        return anova_table

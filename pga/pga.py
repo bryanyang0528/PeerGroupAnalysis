@@ -48,4 +48,4 @@ class PeerGroup():
     def get_within_ss(self):
         df = self.get_data()
         df['value'] = df['value']/(max(df['value'])-min(df['value']))
-        return sum((df.groupby('label').std()['value'] ** 2) * (df.groupby('label').count()['value'] -1))
+        return sum(((df.groupby('label').std()['value'] ** 2) * (df.groupby('label').count()['value'] -1)).fillna(0))

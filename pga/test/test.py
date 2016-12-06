@@ -54,3 +54,17 @@ def test_get_data():
 
 def test_anova():
     assert_almost_equal(pg.anova()['PR(>F)'][0], 0.68092934459725607)
+
+def test_within_ss():
+    assert_almost_equal(pg.get_within_ss(), 0.062407716931187691)
+
+def test_within_ss_decreasing():
+    x = []
+    for i in range(2, len(df_pg)):
+        pg = PeerGroup(df_pg, n_clusters=i, random_state=0, n_init=1)
+        x.append(pg.get_within_ss())
+    print(x)
+    for i in range(1, len(x)):
+        print(x[i])
+        if x[i] > x[i-1]:
+            raise ValueError("within_ss is not decreasing")

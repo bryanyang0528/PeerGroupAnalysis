@@ -40,6 +40,12 @@ class PeerGroup():
         return self._df_grouped.head()
     
     def anova(self):
-        model = ols('value ~ label', data = self._df_grouped).fit()
+        df = self.get_data()
+        model = ols('value ~ label', data = df).fit()
         anova_table = sm.stats.anova_lm(model, typ=2)
         return anova_table
+
+    def get_within_ss(self):
+        df = self.get_data()
+        df['value'] = df['value']/(max(df['value'])-min(df['value']))
+        return sum((df.groupby('label').std()['value'] ** 2) * (df.groupby('label').count()['value'] -1))
